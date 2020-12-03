@@ -151,14 +151,14 @@ if __name__ == '__main__':
                    help='batch size (default: 2)'),
         # CustomArgs(['--ng', '--n_gpu'], default=2, type=int, target='n_gpu',
         #            help='num of gpu (default: 2)'),
-        CustomArgs(['-dist', '--distributed'], default='false', type=str, target='distributed',
+        CustomArgs(['-dist', '--distributed'], default='true', type=str, target='distributed',
                    help='run distributed training. (true or false, default: true)'),
         CustomArgs(['--local_world_size'], default=1, type=int, target='local_world_size',
                    help='the number of processes running on each node, this is passed in explicitly '
                         'and is typically either $1$ or the number of GPUs per node. (default: 1)'),
         CustomArgs(['--local_rank'], default=0, type=int, target='local_rank',
                    help='this is automatically passed in via torch.distributed.launch.py, '
-                        'process will be assigned a local rank ID in [0, local_world_size-1]. (default: 0)')
+                        'process will be assigned a local rank ID in [0, local_world_size-1]. (default: 0)')
 
     ]
     config = ConfigParser.from_args(args, options)
