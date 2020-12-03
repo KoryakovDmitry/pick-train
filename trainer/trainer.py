@@ -299,7 +299,6 @@ class Trainer:
 
             # update metrics
             step = (epoch - 1) * self.len_step + step_idx - 1
-            print(f"step_train:{step}")
             self.writer.set_step(step) if self.local_master else None
             self.loss_metrics.update('loss', avg_loss.item())
             self.loss_metrics.update('gl_loss', avg_gl_loss.item() * self.gl_loss_lambda)
@@ -402,7 +401,6 @@ class Trainer:
                 for path, score in best_paths:
                     predicted_tags.append(path)
 
-                print(f"step_test:{self.step_test}")
                 self.writer.set_step(self.step_test, 'test') \
                     if self.local_master else None
                 self.step_test += 1
@@ -530,7 +528,6 @@ class Trainer:
                 for path, score in best_paths:
                     predicted_tags.append(path)
 
-                print(f"step_valid:{self.step_val}")
                 self.writer.set_step(self.step_val, 'valid') \
                     if self.local_master else None
                 self.step_val += 1
