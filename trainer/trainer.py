@@ -339,7 +339,7 @@ class Trainer:
 
         # do validation after training an epoch
         if self.do_validation:
-            val_result_dict = self._valid_epoch(epoch)
+            val_result_dict = self._valid_epoch()
             log['val_result_dict'] = val_result_dict
 
         if self.lr_scheduler is not None:
