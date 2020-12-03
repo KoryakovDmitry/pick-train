@@ -296,6 +296,7 @@ class Trainer:
 
             # update metrics
             step = (epoch - 1) * self.len_step + step_idx - 1
+            print(f"step_train:{step}")
             self.writer.set_step(step) if self.local_master else None
             self.loss_metrics.update('loss', avg_loss.item())
             self.loss_metrics.update('gl_loss', avg_gl_loss.item() * self.gl_loss_lambda)
@@ -399,6 +400,7 @@ class Trainer:
                     predicted_tags.append(path)
 
                 step_test = (step + 1 - self.val_step_interval) * len(self.test_data_loader) + step_idx
+                print(f"step_test:{step_test}")
                 self.writer.set_step(step_test, 'test') \
                     if self.local_master else None
 
@@ -526,6 +528,7 @@ class Trainer:
                     predicted_tags.append(path)
 
                 step_valid = (step + 1 - self.val_step_interval) * len(self.valid_data_loader) + step_idx
+                print(f"step_valid:{step_valid}")
                 self.writer.set_step(step_valid, 'valid') \
                     if self.local_master else None
 
