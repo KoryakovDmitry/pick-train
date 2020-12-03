@@ -62,9 +62,9 @@ def iob_index_to_str(tags: List[List[int]]):
     return decoded_tags_list
 
 
-def text_index_to_str(texts: torch.Tensor, mask: torch.Tensor):
+def text_index_to_str(texts: torch.Tensor, mask: torch.Tensor, device):
     # union_texts: (B, num_boxes * T)
-    union_texts, union_boxes = texts_to_union_texts(texts, mask)
+    union_texts, union_boxes = texts_to_union_texts(texts, mask, device)
     B, NT = union_texts.shape
 
     decoded_tags_list = []
@@ -79,7 +79,7 @@ def text_index_to_str(texts: torch.Tensor, mask: torch.Tensor):
     return decoded_tags_list, union_boxes
 
 
-def texts_to_union_texts(texts_b, mask):
+def texts_to_union_texts(texts_b, mask, device):
     '''
 
     :param texts_b: (B, text_box, N*T)
@@ -89,8 +89,8 @@ def texts_to_union_texts(texts_b, mask):
 
     B, N, T = mask.shape
 
-    texts = torch.LongTensor(texts_b[:, 0, :].astype(int)).cpu()
-    boxes = torch.LongTensor(texts_b[:, 1, :].astype(int)).cpu()
+    texts = torch.LongTensor(texts_b[:, 0, :].astype(int)).to(device)
+    boxes = torch.LongTensor(texts_b[:, 1, :].astype(int)).to(device)
     # texts = texts.reshape(B, N * T)
     # union_boxes
     mask = mask.reshape(B, N * T)

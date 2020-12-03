@@ -435,7 +435,7 @@ class Trainer:
                 # convert iob index to iob string
                 decoded_tags_list = iob_index_to_str(predicted_tags)
                 # union text as a sequence and convert index to string
-                decoded_texts_list, union_boxes = text_index_to_str(text_segments_with_box, mask)
+                decoded_texts_list, union_boxes = text_index_to_str(text_segments_with_box, mask, self.device)
 
                 boxes_coords = np.array(boxes_coords)
 
