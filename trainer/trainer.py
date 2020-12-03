@@ -374,7 +374,7 @@ class Trainer:
                 for path, score in best_paths:
                     predicted_tags.append(path)
 
-                text_segments = input_data_item['text_segments']  # (B, num_boxes, T)
+                text_segments = input_data_item['text_segments'].cpu().numpy()  # (B, num_boxes, T)
                 boxes_coords = input_data_item['boxes_unresized']
                 filenames = input_data_item['filenames']
                 image_unresized = input_data_item['whole_image_unresized']
