@@ -89,8 +89,8 @@ def texts_to_union_texts(texts_b, mask):
 
     B, N, T = mask.shape
 
-    texts = torch.LongTensor(texts_b[:, 0, :].astype(int))
-    boxes = torch.LongTensor(texts_b[:, 1, :].astype(int))
+    texts = torch.LongTensor(texts_b[:, 0, :].astype(int)).cpu()
+    boxes = torch.LongTensor(texts_b[:, 1, :].astype(int)).cpu()
     # texts = texts.reshape(B, N * T)
     # union_boxes
     mask = mask.reshape(B, N * T)
