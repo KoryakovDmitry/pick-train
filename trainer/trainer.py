@@ -132,6 +132,9 @@ class Trainer:
         for cat, col in zip(Entities_list, colors_add):
             self.colors_cat[cat] = col
 
+        self.step_test = 0
+        self.step_val = 0
+
     def train(self):
         """
         Full training logic, including train and validation.
@@ -316,7 +319,7 @@ class Trainer:
 
             # do validation after val_step_interval iteration
             if self.do_validation and step_idx % self.val_step_interval == 0:
-                val_result_dict = self._valid_epoch(step)
+                val_result_dict = self._valid_epoch()
                 self.logger_info('[Step Validation] Epoch:[{}/{}] Step:[{}/{}]  \n{}'.
                                  format(epoch, self.epochs, step_idx, self.len_step,
                                         SpanBasedF1MetricTracker.dict2str(val_result_dict)))
@@ -344,7 +347,7 @@ class Trainer:
 
         return log
 
-    def plot_test_imgs(self, step):
+    def plot_test_imgs(self):
         self.model.eval()
         self.loss_metrics.reset()
         self.f1_metrics.reset()
@@ -399,10 +402,10 @@ class Trainer:
                 for path, score in best_paths:
                     predicted_tags.append(path)
 
-                step_test = (step + 1 - self.val_step_interval) * len(self.test_data_loader) + step_idx
-                print(f"step_test:{step_test}")
-                self.writer.set_step(step_test, 'test') \
+                print(f"step_test:{self.step_test}")
+                self.writer.set_step(self.step_test, 'test') \
                     if self.local_master else None
+                self.step_test += 1
 
                 avg_gl_loss = torch.mean(gl_loss)
                 avg_crf_loss = torch.mean(crf_loss)
@@ -487,11 +490,11 @@ class Trainer:
                             key = entity_names[ent_idx]
                         img_pred = cv2.polylines(img_pred, [box], True, color=self.colors_cat[key], thickness=2)
 
-                    self.writer.add_image(os.path.basename(filename), img_pred[:, :, ::-1], step_test,
+                    self.writer.add_image(os.path.basename(filename), img_pred[:, :, ::-1], self.step_test,
                                           dataformats="HWC")
-                    self.writer.add_text(os.path.basename(filename), text, step_test)
+                    self.writer.add_text(os.path.basename(filename), text, self.step_test)
 
-    def _valid_epoch(self, step):
+    def _valid_epoch(self):
         '''
          Validate after training an epoch or regular step, this is a time-consuming procedure if validation data is big.
         :param step: Integer, current training epoch.
@@ -527,10 +530,10 @@ class Trainer:
                 for path, score in best_paths:
                     predicted_tags.append(path)
 
-                step_valid = (step + 1 - self.val_step_interval) * len(self.valid_data_loader) + step_idx
-                print(f"step_valid:{step_valid}")
-                self.writer.set_step(step_valid, 'valid') \
+                print(f"step_valid:{self.step_val}")
+                self.writer.set_step(self.step_val, 'valid') \
                     if self.local_master else None
+                self.step_val += 1
 
                 avg_gl_loss = torch.mean(gl_loss)
                 avg_crf_loss = torch.mean(crf_loss)
@@ -565,7 +568,7 @@ class Trainer:
                 self.f1_metrics.update(k, f1_result_dict[lbl][metric])
 
         # test imgs
-        self.plot_test_imgs(step)
+        self.plot_test_imgs()
 
         # rollback to train mode
         self.model.train()
