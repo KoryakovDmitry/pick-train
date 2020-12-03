@@ -451,7 +451,7 @@ class Trainer:
                     # List[ Tuple[str, Tuple[int, int]] ]
                     spans = bio_tags_to_spans(decoded_tags, [])
                     spans = sorted(spans, key=lambda x: x[1][0])
-                    entity_names = spans[0]
+                    entity_names = spans[0] if len(spans) != 0 else []
                     box_idx_pred = []
                     for entity_name, range_tuple in spans:
                         t = ''.join(decoded_texts[range_tuple[0]:range_tuple[1] + 1])
