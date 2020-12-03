@@ -325,7 +325,7 @@ class Trainer:
                 # check if best metric, if true, then save as model_best checkpoint.
                 best, not_improved_count = self._is_best_monitor_metric(False, 0, val_result_dict)
                 if best:
-                    self._save_checkpoint(step, best)
+                    self._save_checkpoint(epoch=epoch, iter=step, save_best=best)
 
             # decide whether continue iter
             if step_idx == self.len_step + 1:
@@ -459,7 +459,7 @@ class Trainer:
                     for entity_name, range_tuple in spans:
                         t = ''.join(decoded_texts[range_tuple[0]:range_tuple[1] + 1])
                         box_idx = set((map(lambda x: int(x), union_box[range_tuple[0]:range_tuple[1] + 1])))
-                        box_idx_pred.append(box_idx)
+                        box_idx_pred.append(tuple(box_idx)[0])
                         text += f'{entity_name}, box_idxs: {box_idx}, \ntext: \n{t}\n\n'
 
                     img_pred = image.copy()
@@ -635,13 +635,14 @@ class Trainer:
             device = torch.device(device)
             return device, list_ids
 
-    def _save_checkpoint(self, epoch, save_best=False):
+    def _save_checkpoint(self, epoch, iter=None, save_best=False):
         '''
         Saving checkpoints
         :param epoch:  current epoch number
         :param save_best: if True, rename the saved checkpoint to 'model_best.pth'
         :return:
         '''
+        iter = iter if iter else epoch
         # only local master process do save model
         if not self.local_master:
             return
@@ -661,9 +662,9 @@ class Trainer:
             'config': self.config
         }
         if save_best:
-            best_path = str(self.checkpoint_dir / 'model_best_iter{}.pth'.format(epoch))
+            best_path = str(self.checkpoint_dir / 'model_best_eph{}.pth'.format(epoch))
             torch.save(state, best_path)
-            self.logger_info("Saving current best: model_best.pth ...")
+            self.logger_info(f"Saving current best: model_best_eph{epoch}.pth ...")
         else:
             filename = str(self.checkpoint_dir / 'checkpoint-epoch{}.pth'.format(epoch))
             torch.save(state, filename)
