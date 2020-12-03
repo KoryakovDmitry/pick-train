@@ -458,9 +458,10 @@ class Trainer:
                     box_idx_pred = []
                     for entity_name, range_tuple in spans:
                         t = ''.join(decoded_texts[range_tuple[0]:range_tuple[1] + 1])
-                        box_idx = set((map(lambda x: int(x), union_box[range_tuple[0]:range_tuple[1] + 1])))
-                        box_idx_pred.append(tuple(box_idx)[0])
-                        text += f'{entity_name}, box_idxs: {box_idx}, \ntext: \n{t}\n\n'
+                        bi = tuple(set((map(lambda x: int(x), union_box[range_tuple[0]:range_tuple[1] + 1]))))
+                        if len(bi) != 0:
+                            box_idx_pred.append(bi[0])
+                        text += f'{entity_name}, box_idxs: {bi}, \ntext: \n{t}\n\n'
 
                     img_pred = image.copy()
 
