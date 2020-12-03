@@ -1,0 +1,39 @@
+0,305,556,454,556,454,569,305,569,Grand Rapids\, Michigan 49507,negative
+1,32,556,182,556,182,569,32,569,Grand Raoids\, Michigan 49591,negative
+2,304,540,385,540,385,554,304,554,2388 West Blvd,negative
+3,32,541,106,541,106,555,32,555,Р.О Вох 1823,negative
+4,305,527,432,527,432,540,305,540,Awesome Company\, inc.,negative
+5,31,526,114,527,114,541,31,540,Tinypint Design,negative
+6,305,502,327,502,327,518,305,518,то:,negative
+7,31,501,73,501,73,518,31,518,FROM:,negative
+8,28,445,136,445,136,456,28,456,whicnever comes tirst.,negative
+9,28,429,532,429,532,442,28,442,Payment is due 7 cays trom the date of issue. Fina paymet is due in 30 days\, or upon project completion\,,negative
+10,495,392,572,392,572,406,495,406,USD $2\,625.00,negative
+11,19,392,116,392,116,406,19,406,Remaining Balance,negative
+12,515,368,572,368,572,383,515,383,($2\,625.00),negative
+13,19,368,205,368,205,382,19,382,Inveine Paymant - December 14\, 2012,negative
+14,519,343,572,343,572,357,519,357,$5250.00,negative
+15,19,344,84,344,84,358,19,358,Invoice Total,negative
+16,20,318,181,318,181,329,20,329,INVOICE TOTALS & HISTORY,negative
+17,515,316,572,316,572,331,515,331,AMOUNT,negative
+18,19,278,90,278,90,291,19,291,Final payment,product_name
+19,519,275,572,275,572,289,519,289,$2\,625.00,total_price
+20,414,276,465,276,465,290,414,290,$2\,625.c0,unit_price
+21,19,251,96,251,96,264,19,264,Down Payment,product_name
+22,520,248,572,248,572,263,520,263,$2\,625.00,total_price
+23,414,248,465,248,465,263,414,263,$2\,625.c0,unit_price
+24,330,251,338,251,338,262,330,262,1,quantity
+25,494,220,573,220,573,237,494,237,TOTAL PRICE,negative
+26,370,220,466,220,466,237,370,237,PRICE PER UNIT,negative
+27,19,221,131,221,131,235,19,235,ITEM DESCRITTION,negative
+28,310,219,341,219,341,238,310,238,am,negative
+29,19,156,142,157,142,173,19,172,New Website Design,negative
+30,447,156,570,156,570,169,447,169,Due by January 14\, 2108,negative
+31,22,131,315,131,315,155,22,155,Awesome Company\, Inc.,negative
+32,448,131,569,131,569,155,448,155,$2\,625.00,negative
+33,384,110,568,110,568,127,384,127,REMAINING BALANCE,negative
+34,20,108,86,108,86,129,20,129,CLIENT,negative
+35,178,63,234,63,234,73,178,73,ISIN,company
+36,439,58,571,58,571,71,439,71,issued December 13\, 2012,date
+37,431,31,569,31,569,48,431,48,INVOICE #332,reference_id
+38,32,11,244,22,241,79,29,67,Artinypint,company
