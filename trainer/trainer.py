@@ -16,13 +16,7 @@ from logger import TensorboardWriter
 from utils.class_utils import iob_labels_vocab_cls
 from utils.util import iob_tags_to_union_iob_tags
 from allennlp.data.dataset_readers.dataset_utils.span_utils import bio_tags_to_spans
-from google.colab import files
-import shutil
 
-
-def download():
-    shutil.make_archive("/content/saved", "zip", "/content/saved")
-    files.download("/content/saved.zip")
 
 
 class Trainer:
@@ -677,12 +671,10 @@ class Trainer:
             best_path = str(self.checkpoint_dir / 'model_best_eph{}.pth'.format(epoch))
             torch.save(state, best_path)
             self.logger_info(f"Saving current best: model_best_eph{epoch}.pth ...")
-            download()
         else:
             filename = str(self.checkpoint_dir / 'checkpoint-epoch{}.pth'.format(epoch))
             torch.save(state, filename)
             self.logger_info("Saving checkpoint: {} ...".format(filename))
-            download()
 
     def _resume_checkpoint(self, resume_path):
         '''
