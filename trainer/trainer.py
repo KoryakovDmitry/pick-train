@@ -20,8 +20,8 @@ from google.colab import files
 import shutil
 
 
-def download(path):
-    out = shutil.make_archive(path, "zip", path)
+def download():
+    out = shutil.make_archive("/content/saved", "zip", "/content/saved")
     files.download(out)
 
 
