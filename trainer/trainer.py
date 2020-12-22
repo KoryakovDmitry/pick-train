@@ -21,8 +21,8 @@ import shutil
 
 
 def download():
-    out = shutil.make_archive("/content/saved", "zip", "/content/saved")
-    files.download(out)
+    shutil.make_archive("/content/saved", "zip", "/content/saved")
+    files.download("/content/saved.zip")
 
 
 class Trainer:
