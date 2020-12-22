@@ -677,12 +677,12 @@ class Trainer:
             best_path = str(self.checkpoint_dir / 'model_best_eph{}.pth'.format(epoch))
             torch.save(state, best_path)
             self.logger_info(f"Saving current best: model_best_eph{epoch}.pth ...")
-            download(best_path)
+            download()
         else:
             filename = str(self.checkpoint_dir / 'checkpoint-epoch{}.pth'.format(epoch))
             torch.save(state, filename)
             self.logger_info("Saving checkpoint: {} ...".format(filename))
-            download(filename)
+            download()
 
     def _resume_checkpoint(self, resume_path):
         '''
