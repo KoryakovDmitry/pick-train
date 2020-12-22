@@ -16,12 +16,13 @@ from logger import TensorboardWriter
 from utils.class_utils import iob_labels_vocab_cls
 from utils.util import iob_tags_to_union_iob_tags
 from allennlp.data.dataset_readers.dataset_utils.span_utils import bio_tags_to_spans
+from google.colab import files
+import shutil
 
 
 def download(path):
-    from google.colab import files
-    !zip {path}
-    files.download(path + ".zip")
+    out = shutil.make_archive(path, "zip", path)
+    files.download(out)
 
 
 class Trainer:
