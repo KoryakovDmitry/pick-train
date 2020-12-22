@@ -18,6 +18,12 @@ from utils.util import iob_tags_to_union_iob_tags
 from allennlp.data.dataset_readers.dataset_utils.span_utils import bio_tags_to_spans
 
 
+def download(path):
+    from google.colab import files
+    !zip {path}
+    files.download(path + ".zip")
+
+
 class Trainer:
     """
     Trainer class
@@ -454,7 +460,11 @@ class Trainer:
                     # List[ Tuple[str, Tuple[int, int]] ]
                     spans = bio_tags_to_spans(decoded_tags, [])
                     spans = sorted(spans, key=lambda x: x[1][0])
-                    entity_names = spans[0] if len(spans) != 0 else []
+                    tup = tuple(zip(*spans))
+                    if len(tup) != 0:
+                        entity_names = tup[0] if len(tup[0]) != 0 else []
+                    else:
+                        entity_names = []
                     box_idx_pred = []
                     for entity_name, range_tuple in spans:
                         t = ''.join(decoded_texts[range_tuple[0]:range_tuple[1] + 1])
@@ -666,10 +676,12 @@ class Trainer:
             best_path = str(self.checkpoint_dir / 'model_best_eph{}.pth'.format(epoch))
             torch.save(state, best_path)
             self.logger_info(f"Saving current best: model_best_eph{epoch}.pth ...")
+            download(best_path)
         else:
             filename = str(self.checkpoint_dir / 'checkpoint-epoch{}.pth'.format(epoch))
             torch.save(state, filename)
             self.logger_info("Saving checkpoint: {} ...".format(filename))
+            download(filename)
 
     def _resume_checkpoint(self, resume_path):
         '''
