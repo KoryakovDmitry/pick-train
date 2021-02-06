@@ -701,5 +701,5 @@ class Trainer:
                                 "Optimizer parameters not being resumed.")
         else:
             self.optimizer.load_state_dict(checkpoint['optimizer'])
-
+        del checkpoint
         self.logger_info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
