@@ -12,7 +12,7 @@ import torch.distributed as dist
 
 from logger import setup_logging
 from utils import read_json, write_json
-
+from trainer.madgrad import MADGRAD
 
 class ConfigParser:
     def __init__(self, config, resume=None, modification=None, run_id=None):
@@ -99,8 +99,17 @@ class ConfigParser:
         """
         module_name = self[name]['type']
         module_args = dict(self[name]['args'])
-        # assert all([k not in module_args for k in kwargs]), 'Overwriting kwargs given in config file is not allowed'
         module_args.update(kwargs)
+        if (name == 'optimizer') and (module_name == "MADGRAD"):
+            optim = MADGRAD(*args,
+                            lr=module_args['lr'],
+                            momentum=module_args['momentum'],
+                            weight_decay=module_args['weight_decay'],
+                            eps=module_args['eps'],
+                            )
+            return optim
+
+        # assert all([k not in module_args for k in kwargs]), 'Overwriting kwargs given in config file is not allowed'
         return getattr(module, module_name)(*args, **module_args)
 
     def init_ftn(self, name, module, *args, **kwargs):
