@@ -9,6 +9,7 @@ from torchvision.ops import roi_align
 from torchvision.ops import roi_pool
 
 from . import resnet
+from . import efficientnetv2
 
 
 class Encoder(nn.Module):
@@ -64,6 +65,15 @@ class Encoder(nn.Module):
             self.cnn = resnet.resnet101(output_channels=image_feature_dim)
         elif image_encoder == 'resnet152':
             self.cnn = resnet.resnet152(output_channels=image_feature_dim)
+
+        elif image_encoder == 'effnetv2_s':
+            self.cnn = efficientnetv2.effnetv2_s(num_classes=image_feature_dim, width_mult=1.)
+        elif image_encoder == 'effnetv2_m':
+            self.cnn = efficientnetv2.effnetv2_m(num_classes=image_feature_dim, width_mult=1.)
+        elif image_encoder == 'effnetv2_l':
+            self.cnn = efficientnetv2.effnetv2_l(num_classes=image_feature_dim, width_mult=1.)
+        elif image_encoder == 'effnetv2_xl':
+            self.cnn = efficientnetv2.effnetv2_xl(num_classes=image_feature_dim, width_mult=1.)
         else:
             raise NotImplementedError()
 
