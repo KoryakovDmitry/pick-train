@@ -129,28 +129,29 @@ class Document:
             text_segments = [list(trans) for trans in transcripts[:boxes_num]]
 
             if self.training:
-                # assign iob label to input text through exactly match way, this process needs entity-level label
-                if self.iob_tagging_type != 'box_level':
-                    with entities_file.open() as f:
-                        entities = json.load(f)
-
-                if self.iob_tagging_type == 'box_level':
-                    # convert transcript of every boxes to iob label, using entity type of corresponding box
-                    iob_tags_label = text2iob_label_with_box_level_match(box_entity_types[:boxes_num],
-                                                                         transcripts[:boxes_num])
-                elif self.iob_tagging_type == 'document_level':
-                    # convert transcripts to iob label using document level tagging match method, all transcripts will
-                    # be concatenated as a sequences
-                    iob_tags_label = text2iob_label_with_document_level_exactly_match(transcripts[:boxes_num], entities)
-
-                elif self.iob_tagging_type == 'box_and_within_box_level':
-                    # perform exactly tagging within specific box, box_level_entities parames will perform boex level tagging.
-                    iob_tags_label = text2iob_label_with_box_and_within_box_exactly_level(box_entity_types[:boxes_num],
-                                                                                          transcripts[:boxes_num],
-                                                                                          entities, ['address'])
-
-                iob_tags_label = IOBTagsField.process(iob_tags_label)[:, :transcript_len].numpy()
+                # # assign iob label to input text through exactly match way, this process needs entity-level label
+                # if self.iob_tagging_type != 'box_level':
+                #     with entities_file.open() as f:
+                #         entities = json.load(f)
+                #
+                # if self.iob_tagging_type == 'box_level':
+                #     # convert transcript of every boxes to iob label, using entity type of corresponding box
+                #     iob_tags_label = text2iob_label_with_box_level_match(box_entity_types[:boxes_num],
+                #                                                          transcripts[:boxes_num])
+                # elif self.iob_tagging_type == 'document_level':
+                #     # convert transcripts to iob label using document level tagging match method, all transcripts will
+                #     # be concatenated as a sequences
+                #     iob_tags_label = text2iob_label_with_document_level_exactly_match(transcripts[:boxes_num], entities)
+                #
+                # elif self.iob_tagging_type == 'box_and_within_box_level':
+                #     # perform exactly tagging within specific box, box_level_entities parames will perform boex level tagging.
+                #     iob_tags_label = text2iob_label_with_box_and_within_box_exactly_level(box_entity_types[:boxes_num],
+                #                                                                           transcripts[:boxes_num],
+                #                                                                           entities, ['address'])
+                #
+                # iob_tags_label = IOBTagsField.process(iob_tags_label)[:, :transcript_len].numpy()
                 box_entity_types = [entities_vocab_cls.stoi[t] for t in box_entity_types[:boxes_num]]
+                iob_tags_label = box_entity_types
 
             # texts shape is (num_texts, max_texts_len), texts_len shape is (num_texts,)
             texts, texts_len = TextSegmentsField.process(text_segments)

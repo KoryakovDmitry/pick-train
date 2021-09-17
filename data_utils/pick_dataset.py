@@ -207,10 +207,10 @@ class BatchCollateFn(object):
         # if self.training:
         # iob tag label for input text, (B, num_boxes, T)
         iob_tags_label_padded_list = [F.pad(torch.LongTensor(x.iob_tags_label),
-                                            (0, max_transcript_len - x.transcript_len,
-                                             0, max_boxes_num_batch - x.boxes_num),
+                                            (0, max_boxes_num_batch - x.boxes_num),
                                             value=iob_labels_vocab_cls.stoi['<pad>'])
                                       for i, x in enumerate(batch_list)]
+        leng = [len(x.iob_tags_label) for i, x in enumerate(batch_list)]
         iob_tags_label_batch_tensor = torch.stack(iob_tags_label_padded_list, dim=0)
 
         # else:
@@ -246,5 +246,6 @@ class BatchCollateFn(object):
                      # image_indexs=image_indexs_tensor,
                      iob_tags_label=iob_tags_label_batch_tensor,
                      filenames=filenames,
+                     leng=leng,
                      )
         return batch

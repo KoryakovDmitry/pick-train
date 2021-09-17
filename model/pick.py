@@ -92,6 +92,7 @@ class PICKModel(nn.Module):
         iob_tags_label = kwargs['iob_tags_label'] # if self.training else None  # (B, N, T)
         mask = kwargs['mask']  # (B, N, T)
         boxes_coordinate = kwargs['boxes_coordinate']  # (B, num_boxes, 8)
+        leng = kwargs['leng']
 
         ##### Forward Begin #####
         ### Encoder module ###
@@ -128,7 +129,7 @@ class PICKModel(nn.Module):
 
         ### Decoder module ###
         logits, new_mask, log_likelihood = self.decoder(x.reshape(B, N, T, -1), x_gcn, mask, text_length,
-                                                        iob_tags_label)
+                                                        iob_tags_label, leng)
         ##### Forward End #####
 
         output = {"logits": logits, "new_mask": new_mask, "adj": adj}

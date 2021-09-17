@@ -89,7 +89,7 @@ class BiLSTMLayer(nn.Module):
         '''
 
         # B*N, T, hidden_size
-        x_seq, sorted_lengths, invert_order, h_0, c_0 = self.sort_tensor(x_seq, lenghts, initial[0], initial[0])
+        x_seq, sorted_lengths, invert_order, h_0, c_0 = self.sort_tensor(x_seq, torch.tensor(lenghts), initial[0], initial[0])
         packed_x = nn.utils.rnn.pack_padded_sequence(x_seq, lengths=sorted_lengths, batch_first=True)
         self.lstm.flatten_parameters()
         output, _ = self.lstm(packed_x)
@@ -107,7 +107,7 @@ class UnionLayer(nn.Module):
     def __init__(self):
         super().__init__()
 
-    def forward(self, x: Tensor, x_gcn: Tensor, mask: Tensor, length: Tensor, tags):
+    def forward(self, x: Tensor, x_gcn: Tensor, mask: Tensor, length: Tensor, tags, leng):
         '''
         For a document, we merge all non-paddding (valid) x and x_gcn value together in a document-level format,
         then feed it into crf layer.
@@ -127,10 +127,11 @@ class UnionLayer(nn.Module):
         mask = mask.reshape(B, N * T)
 
         # (B, )
-        doc_seq_len = length.sum(dim=-1)
+        # doc_seq_len = length.sum(dim=-1)
+        doc_seq_len = leng
 
         # dynamic calculate max document's union sequences length, only used to one gpus training mode.
-        max_doc_seq_len = doc_seq_len.max()
+        max_doc_seq_len = max(doc_seq_len)
         # static calculate max_doc_seq_len
         # max_doc_seq_len = documents.MAX_BOXES_NUM * documents.MAX_TRANSCRIPT_LEN
 
@@ -141,22 +142,22 @@ class UnionLayer(nn.Module):
         new_mask = torch.zeros_like(mask, device=x.device)
         # if self.training:
         # (B, N*T)
-        tags = tags.reshape(B, N * T)
-        new_tag = torch.full_like(tags, iob_labels_vocab_cls.stoi['<pad>'], device=x.device)
-        new_tag = new_tag[:, :max_doc_seq_len]
-
-        # merge all non-padding value together in document-level
-        for i in range(B):  # enumerate every document
-            doc_x = x[i]  # (N*T, D)
-            doc_mask = mask[i]  # (N*T,)
-            valid_doc_x = doc_x[doc_mask == 1]  # (num_valid, D)
-            num_valid = valid_doc_x.size(0)
-            new_x[i, :num_valid] = valid_doc_x  # (B, N*T, D)
-            new_mask[i, :doc_seq_len[i]] = 1  # (B, N*T)
-
-            # if self.training:
-            valid_tag = tags[i][doc_mask == 1]
-            new_tag[i, :num_valid] = valid_tag
+        # tags = tags.reshape(B, N * T)
+        # new_tag = torch.full_like(tags, iob_labels_vocab_cls.stoi['<pad>'], device=x.device)
+        # new_tag = new_tag[:, :max_doc_seq_len]
+        #
+        # # merge all non-padding value together in document-level
+        # for i in range(B):  # enumerate every document
+        #     doc_x = x[i]  # (N*T, D)
+        #     doc_mask = mask[i]  # (N*T,)
+        #     valid_doc_x = doc_x[doc_mask == 1]  # (num_valid, D)
+        #     num_valid = valid_doc_x.size(0)
+        #     new_x[i, :num_valid] = valid_doc_x  # (B, N*T, D)
+        #     new_mask[i, :doc_seq_len[i]] = 1  # (B, N*T)
+        #
+        #     # if self.training:
+        #     valid_tag = tags[i][doc_mask == 1]
+        #     new_tag[i, :num_valid] = valid_tag
 
         # (B, max_doc_seq_len, D)
         new_x = new_x[:, :max_doc_seq_len, :]
@@ -171,6 +172,7 @@ class UnionLayer(nn.Module):
         new_x = x_gcn + new_x
 
         # if self.training:
+        new_tag = tags
         return new_x, new_mask, doc_seq_len, new_tag
         # else:
         #     return new_x, new_mask, doc_seq_len, None
@@ -184,7 +186,7 @@ class Decoder(nn.Module):
         self.bilstm_layer = BiLSTMLayer(bilstm_kwargs, mlp_kwargs)
         self.crf_layer = ConditionalRandomField(**crf_kwargs)
 
-    def forward(self, x: Tensor, x_gcn: Tensor, mask: Tensor, length: Tensor, tags: Tensor):
+    def forward(self, x: Tensor, x_gcn: Tensor, mask: Tensor, length: Tensor, tags: Tensor, leng):
         '''
 
         :param x: set of nodes, the output of encoder, (B, N, T, D)
@@ -196,7 +198,7 @@ class Decoder(nn.Module):
         '''
         # new_x: (B, max_doc_seq_len, D), new_mask: (B, max_doc_seq_len),
         # doc_seq_len: (B, ), new_tag: (B, N*T)
-        new_x, new_mask, doc_seq_len, new_tag = self.union_layer(x, x_gcn, mask, length, tags)
+        new_x, new_mask, doc_seq_len, new_tag = self.union_layer(x, x_gcn, mask, length, tags, leng)
 
         # (B, N*T, out_dim)
         logits = self.bilstm_layer(new_x, doc_seq_len, (None, None))
