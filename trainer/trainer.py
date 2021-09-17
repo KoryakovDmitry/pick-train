@@ -14,7 +14,7 @@ from utils import inf_loop
 from utils.metrics import MetricTracker, SpanBasedF1MetricTracker
 from logger import TensorboardWriter
 from utils.class_utils import iob_labels_vocab_cls
-from utils.util import iob_tags_to_union_iob_tags
+# from utils.util import iob_tags_to_union_iob_tags
 from allennlp.data.dataset_readers.dataset_utils.span_utils import bio_tags_to_spans
 
 
@@ -284,8 +284,8 @@ class Trainer:
 
             golden_tags = input_data_item['iob_tags_label']
             mask = input_data_item['mask']
-            union_iob_tags = iob_tags_to_union_iob_tags(golden_tags, mask)
-
+            # union_iob_tags = iob_tags_to_union_iob_tags(golden_tags, mask)
+            union_iob_tags = golden_tags
             if self.distributed:
                 dist.barrier()
             self.train_f1_metrics.update(predicted_tags_hard_prob.long(), union_iob_tags, new_mask)
@@ -420,7 +420,8 @@ class Trainer:
                     for j, tag_id in enumerate(instance_tags):
                         predicted_tags_hard_prob[i, j, tag_id] = 1
 
-                union_iob_tags = iob_tags_to_union_iob_tags(golden_tags, mask)
+                union_iob_tags = golden_tags
+                # union_iob_tags = iob_tags_to_union_iob_tags(golden_tags, mask)
 
                 if self.distributed:
                     dist.barrier()
@@ -554,7 +555,8 @@ class Trainer:
 
                 golden_tags = input_data_item['iob_tags_label']
                 mask = input_data_item['mask']
-                union_iob_tags = iob_tags_to_union_iob_tags(golden_tags, mask)
+                # union_iob_tags = iob_tags_to_union_iob_tags(golden_tags, mask)
+                union_iob_tags = golden_tags
 
                 if self.distributed:
                     dist.barrier()
@@ -571,7 +573,7 @@ class Trainer:
                 self.f1_metrics.update(k, f1_result_dict[lbl][metric])
 
         # test imgs
-        self.plot_test_imgs()
+        # self.plot_test_imgs()
 
         # rollback to train mode
         self.model.train()

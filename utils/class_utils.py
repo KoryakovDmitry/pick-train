@@ -1,5 +1,3 @@
-
-
 from collections import Counter
 from torchtext.vocab import Vocab
 from pathlib import Path
@@ -48,6 +46,19 @@ def entities2iob_labels(entities: list):
     return tags
 
 
+def entities2iob_labels_bbox(entities: list):
+    '''
+    get all iob string label by entities
+    :param entities:
+    :return:
+    '''
+    tags = []
+    for e in entities:
+        tags.append(e)
+    tags.append('O')
+    return tags
+
+
 keys_vocab_cls = ClassVocab(Path(__file__).parent.joinpath('keys.txt'), specials_first=False)
-iob_labels_vocab_cls = ClassVocab(entities2iob_labels(entities_list.Entities_list), specials_first=False)
+iob_labels_vocab_cls = ClassVocab(entities2iob_labels_bbox(entities_list.Entities_list), specials_first=False)
 entities_vocab_cls = ClassVocab(entities_list.Entities_list, specials_first=False)
