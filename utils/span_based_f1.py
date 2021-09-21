@@ -198,8 +198,8 @@ class SpanBasedF1Measure(Metric):
             predicted_spans = tags_to_spans_function(predicted_string_labels)
             gold_spans = tags_to_spans_function(gold_string_labels)
 
-            predicted_spans = self._handle_continued_spans(predicted_spans)
-            gold_spans = self._handle_continued_spans(gold_spans)
+            # predicted_spans = self._handle_continued_spans(predicted_spans)
+            # gold_spans = self._handle_continued_spans(gold_spans)
 
             for span in gold_spans:
                 self._total[span[0]] += 1
