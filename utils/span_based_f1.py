@@ -15,6 +15,7 @@ from allennlp.data.dataset_readers.dataset_utils.span_utils import (
     bmes_tags_to_spans,
     TypedStringSpan
 )
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
 
 '''
 Copy-paste from allennlp.training.metrics.span_based_f1_measure
@@ -173,22 +174,29 @@ class SpanBasedF1Measure(Metric):
 
             # print('pred_str: {} \n gold_str: {}'.format(predicted_string_labels, gold_string_labels))
 
-            tags_to_spans_function = None
-            # `label_encoding` is empty and `tags_to_spans_function` is provided.
-            if self._label_encoding is None and self._tags_to_spans_function:
-                tags_to_spans_function = self._tags_to_spans_function
-            # Search by `label_encoding`.
-            elif self._label_encoding == "BIO":
-                tags_to_spans_function = bio_tags_to_spans
-            elif self._label_encoding == "IOB1":
-                tags_to_spans_function = iob1_tags_to_spans
-            elif self._label_encoding == "BIOUL":
-                tags_to_spans_function = bioul_tags_to_spans
-            elif self._label_encoding == "BMES":
-                tags_to_spans_function = bmes_tags_to_spans
+            # tags_to_spans_function = None
+            # # `label_encoding` is empty and `tags_to_spans_function` is provided.
+            # if self._label_encoding is None and self._tags_to_spans_function:
+            #     tags_to_spans_function = self._tags_to_spans_function
+            # # Search by `label_encoding`.
+            # elif self._label_encoding == "BIO":
+            #     tags_to_spans_function = bio_tags_to_spans
+            # elif self._label_encoding == "IOB1":
+            #     tags_to_spans_function = iob1_tags_to_spans
+            # elif self._label_encoding == "BIOUL":
+            #     tags_to_spans_function = bioul_tags_to_spans
+            # elif self._label_encoding == "BMES":
+            #     tags_to_spans_function = bmes_tags_to_spans
 
-            predicted_spans = tags_to_spans_function(predicted_string_labels, self._ignore_classes)
-            gold_spans = tags_to_spans_function(gold_string_labels, self._ignore_classes)
+            def tags_to_spans_function(tags):
+                spans = []
+                for i in range(len(tags)):
+                    if tags[i] != "O":
+                        spans.append((tags[i], (i, i)))
+                return spans
+
+            predicted_spans = tags_to_spans_function(predicted_string_labels)
+            gold_spans = tags_to_spans_function(gold_string_labels)
 
             predicted_spans = self._handle_continued_spans(predicted_spans)
             gold_spans = self._handle_continued_spans(gold_spans)

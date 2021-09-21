@@ -147,17 +147,18 @@ class UnionLayer(nn.Module):
         # new_tag = new_tag[:, :max_doc_seq_len]
         #
         # # merge all non-padding value together in document-level
-        # for i in range(B):  # enumerate every document
-        #     doc_x = x[i]  # (N*T, D)
-        #     doc_mask = mask[i]  # (N*T,)
-        #     valid_doc_x = doc_x[doc_mask == 1]  # (num_valid, D)
-        #     num_valid = valid_doc_x.size(0)
-        #     new_x[i, :num_valid] = valid_doc_x  # (B, N*T, D)
-        #     new_mask[i, :doc_seq_len[i]] = 1  # (B, N*T)
-        #
-        #     # if self.training:
-        #     valid_tag = tags[i][doc_mask == 1]
-        #     new_tag[i, :num_valid] = valid_tag
+        new_tag = tags
+        for i in range(B):  # enumerate every document
+            doc_x = x[i]  # (N*T, D)
+            doc_mask = mask[i]  # (N*T,)
+            valid_doc_x = doc_x[doc_mask == 1]  # (num_valid, D)
+            num_valid = valid_doc_x.size(0)
+            new_x[i, :num_valid] = valid_doc_x  # (B, N*T, D)
+            new_mask[i, :doc_seq_len[i]] = 1  # (B, N*T)
+
+            # if self.training:
+            # valid_tag = tags[i][doc_mask == 1]
+            # new_tag[i, :num_valid] = valid_tag
 
         # (B, max_doc_seq_len, D)
         new_x = new_x[:, :max_doc_seq_len, :]
@@ -172,7 +173,6 @@ class UnionLayer(nn.Module):
         new_x = x_gcn + new_x
 
         # if self.training:
-        new_tag = tags
         return new_x, new_mask, doc_seq_len, new_tag
         # else:
         #     return new_x, new_mask, doc_seq_len, None
