@@ -192,13 +192,11 @@ class SpanBasedF1Measure(Metric):
                 spans = []
                 for i in range(len(tags)):
                     if tags[i] != "O":
-                        spans.append((tags[i], (i, i)))
+                        spans.append((tags[i], i))
                 return spans
 
-            for p, g in zip(predicted_string_labels, gold_string_labels):
-                print(f"predict {p}, gold {g}")
-
             predicted_spans = tags_to_spans_function(predicted_string_labels)
+            print(predicted_spans)
             gold_spans = tags_to_spans_function(gold_string_labels)
 
             # predicted_spans = self._handle_continued_spans(predicted_spans)
