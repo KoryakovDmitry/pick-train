@@ -195,6 +195,9 @@ class SpanBasedF1Measure(Metric):
                         spans.append((tags[i], (i, i)))
                 return spans
 
+            for p, g in zip(predicted_string_labels, gold_string_labels):
+                print(f"predict {p}, gold {g}")
+
             predicted_spans = tags_to_spans_function(predicted_string_labels)
             gold_spans = tags_to_spans_function(gold_string_labels)
 
